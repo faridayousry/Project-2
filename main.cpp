@@ -80,18 +80,23 @@ int simulate(unsigned short instr)
                 
             }
             break;
-        /*    
-        case 7:
-            if(((instr>>11)&3) == 0) {
-                int off;
-                if(instr & 0x400)
-                    off = (instr & 0x7FF) - 0x800;
+           
+        case 7:		//formats 18 & 19
+            if(((instr>>11)&3) == 0) {		//if opcode == 0 ; -> format 18 (unconditional branch)
+                int off;			//declare offset11 (bits 0-10)  
+                if(instr & 0x400)		    //if sign bit == 1
+                    off = (instr & 0x7FF) - 0x800;	//mask to get 11 right most bits (0-10) from instruction
+		    						//Offset11 - 1000 000 0000 = 2's complement ?????
                 else
-                    off = (instr & 0x7FF);
-                printf("B\t%d\t\t# Jump to (current instr. addr)+4%+d\n", off,off*2);
+                    off = (instr & 0x7FF);		//else if sign bit == 0
+                printf("B\t%d\t\t# Jump to (current instr. addr)+4%+d\n", off,off*2);	
             }
+	    else{				//format 19 (long branch woth link)
+		int off;
+		if(((instr>>11)&1) == 0){	//High 'H' flag == 0  (instruction 1)
+		}
             break;
-        */
+        
         default:
             printf("UNKNOWN INSTR!\n");
     }
