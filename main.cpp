@@ -11,6 +11,8 @@ unsigned int Regs[16];
 #define	PC	Regs[15]
 #define	LR	Regs[14]
 
+//SHOULD WE DEFINE A PSR (CPSR) program status register to use a flag/store the result of cmp instruction
+
 int main() {
     FILE *fp;
     unsigned short inst_word;
@@ -41,7 +43,7 @@ int simulate(unsigned short instr)
 
     switch(fmt){
         case 0:             // format 1/2
-            op = (instr >> 11) & 3;         //mask to get bits 11 &12 (opcode in format 1 & 3)
+            op = (instr >> 11) & 3;         //mask to get bits 11 &12 (opcode in format 1)
             rd = instr & 7;                 //mask to get 3 rightmost bits (rd for formats 1,2,4,7,8,9,10) 
             rs = (instr >>  3) & 7;         //mask to get bits 3,4,5 (rs for formats 1,2,4  &  rb for 7,8,9,10)
             offset5 = (instr >> 6) & 0x1F;  //mask to get bits 6-10 (offset5 for formats 1,9,10)
@@ -50,17 +52,17 @@ int simulate(unsigned short instr)
                 switch(op){
                     case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);	//logical left shift instruction
 			    Regs[rd] = (Regs[rs] << offset5 );
-			    cout << "\n \t r"<< rd << " has been updated";
+			    cout << "\n \t R"<< rd << " has been updated";
 				break;
 				
                     case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5); 	//logical right shift instruction
 			    Regs[rd] = (Regs[rs] >> offset5 );
-			    cout << "\n \t r"<< rd << " has been updated";
+			    cout << "\n \t R"<< rd << " has been updated";
 				break;
 				
                     case 2: printf("asr\tr%d, r%d, #%d\n", rd, rs, offset5);  	//arithmetic right shift instruction
-			    Regs[rd] = (Regs[rs] >> offset5 );
-			    cout << "\n \t r"<< rd << " has been updated";
+			    Regs[rd] = (Regs[rs] >> offset5 );			//NEEDS TO CHANGE TO CHECK SIGN BIT!!!!!!!!!!!!!!!!!!!!!1
+			    cout << "\n \t R"<< rd << " has been updated";
 				break;
                 
                 
@@ -71,12 +73,12 @@ int simulate(unsigned short instr)
                 	if((offset5 & 0x10) == 0){          //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                //if so -> add format: "ADD rd, rs, rn"
                     	Regs[rd] = Regs[rs] + Regs[rn];         //update registers array 
-			 cout << "\n \t r"<< rd << " has been updated";
+			 cout << "\n \t R"<< rd << " has been updated";
                     }
                 	else {                              //else if 'I' flag (immediate') is not set:
                     	printf("#%d\n", offset3);           //-> add format: "ADD rd, rs, offset"
                     	Regs[rd] = Regs[rs] + offset3;          //update registers array 
-			cout << "\n \t r"<< rd << " has been updated";
+			cout << "\n \t R"<< rd << " has been updated";
                     }
                 }
                 else {        //sub instruction
@@ -84,20 +86,45 @@ int simulate(unsigned short instr)
                     if((offset5 & 0x10) == 0){           //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                  //if so -> sub format: "SUB rd, rs, rn"
                     	Regs[rd] = Regs[rs] - Regs[rn];		  //update registers array 
-			cout << "\n \t r"<< rd << " has been updated";
+			cout << "\n \t R"<< rd << " has been updated";
 
                     }
                 	else {
                     	printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set: -> sub format: "SUB rd, rs, offset"  
                     	Regs[rd] = Regs[rs] - offset3;           //update registers array 
-			cout << "\n \t r"<< rd << " has been updated";
+			cout << "\n \t R"<< rd << " has been updated";
                     }
 				}    
             }
             break;
 		  
 		    
-        case 1:		//formats 
+        case 1:		//format 3  (move/compare/add/subtract Immediate)
+		op = (instr >> 11) & 3;         //mask to get bits 11 &12 (opcode)
+           	rd = (instr >> 8) & 7;                 //mask to get 3 bits f (bits 8,9,19 for rd) 
+           	offset8 = instr  & 0xFF;  	//mask to get bits 0-7 (offset8)
+		    
+		switch(op){
+                	case 0: printf("mov\tr%d, #%d\n", rd, offset8);		//MOV imm instruction
+			    Regs[rd] =  offset8 ;
+			    cout << "\n \t R"<< rd << " has been updated";
+				break;
+				
+			case 1: printf("cmp\tr%d, #%d\n", rd, offset8);		//cmp imm instruction
+			    (Regs[rd] =  offset8)? 1;0		//USE CPSR?????????????????????????/
+			    cout << "\n \t R"<< rd << " has been updated";
+				break;
+				
+			case 2: printf("add\tr%d, #%d\n", rd, offset8);		//add imm instruction
+			    Regs[rd] =  Regs[rd] + offset8 ;
+			    cout << "\n \t R"<< rd << " has been updated";
+				break;
+				
+			case 3: printf("sub\tr%d, #%d\n", rd, offset8);		//sub imm instruction
+			    Regs[rd] =  Regs[rd] - offset8 ;
+			    cout << "\n \t R"<< rd << " has been updated";
+				break;
+			
 		break;    
 		    
 		    
