@@ -123,10 +123,27 @@ int simulate(unsigned short instr)
             }
 	    else{				//format 19 (long branch woth link)
 		int off;					//CONSIDER SIGN BIT OF  ADDRESS????????????
+		off = instr & 0x07FF;		//mask to get offset  (0000 0111 1111 1111)
+		    
 		if(((instr>>11)&1) == 0){	//High 'H' flag == 0  (instruction 1)
-			off = instr & 0x07FF;		//mask to get offset  (0000 0111 1111 1111)
+			Regs[15] = Regs[15] + (off << 12);	//PC = PC + (offset << 12)
+			Regs[14] = Regs[15];		//LR = PC ????????????????????????????
+			//In the first instruction the Offset field contains the upper 11 bits of the target address.
+			//This is shifted left by 12 bits and added to the current PC address. The resulting
+			//address is placed in LR.
+		
+		else{				//High 'H' flag == 1 (instruction 2)
+			Regs[14] = Regs[14] + (off << 1);	//LR = LR + (offset << 1)
+			Regs[15] = Regs[14];			//PC = LR
 			
+			//In the second instruction the Offset field contains an 11-bit representation lower half of
+			//the target address. This is shifted left by 1 bit and added to LR. LR, which now contains
+			//the full 23-bit address, is placed in PC, the address of the instruction following the BL
+			//is placed in LR and bit 0 of LR is set.
+			//The branch offset must take account of the prefetch operation, which causes the PC
+			//to be 1 word (4 bytes) ahead of the current instruction
 		}
+	    }
             break;
         
         default:
