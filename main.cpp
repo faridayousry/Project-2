@@ -1,5 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include <iostream>
+using namespace std;
 
 int simulate(unsigned short);
 
@@ -44,13 +46,24 @@ int simulate(unsigned short instr)
             rs = (instr >>  3) & 7;         //mask to get bits 3,4,5 (rs for formats 1,2,4  &  rb for 7,8,9,10)
             offset5 = (instr >> 6) & 0x1F;  //mask to get bits 6-10 (offset5 for formats 1,9,10)
             if(op!=3) {     // format 1
-                /*
-                switch(op){
-                    case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5); break;
-                    case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5); break;
-                    case 2: printf("asr\tr%d, r%d, #%d\n", rd, rs, offset5); break;
                 
-                }*/
+                switch(op){
+                    case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);	//logical left shift instruction
+			    Regs[rd] = (Regs[rs] << offset5 );
+			    cout << "\n \t r"<< rd << " has been updated";
+				break;
+				
+                    case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5); 	//logical right shift instruction
+			    Regs[rd] = (Regs[rs] >> offset5 );
+			    cout << "\n \t r"<< rd << " has been updated";
+				break;
+				
+                    case 2: printf("asr\tr%d, r%d, #%d\n", rd, rs, offset5);  	//arithmetic right shift instruction
+			    Regs[rd] = (Regs[rs] >> offset5 );
+			    cout << "\n \t r"<< rd << " has been updated";
+				break;
+                
+                
             } else { /*add/sub*/      // format 2
                 offset3 = rn = offset5 & 0x07;          //mask to get 3 right most bits of offset5
                 if((offset5 & 0x08) == 0){              //if opcode (of format 2) == 0 -> add instruction 
@@ -58,12 +71,12 @@ int simulate(unsigned short instr)
                 	if((offset5 & 0x10) == 0){          //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                //if so -> add format: "ADD rd, rs, rn"
                     	Regs[rd] = Regs[rs] + Regs[rn];         //update registers array 
-				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
+			 cout << "\n \t r"<< rd << " has been updated";
                     }
                 	else {                              //else if 'I' flag (immediate') is not set:
                     	printf("#%d\n", offset3);           //-> add format: "ADD rd, rs, offset"
                     	Regs[rd] = Regs[rs] + offset3;          //update registers array 
-				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
+			cout << "\n \t r"<< rd << " has been updated";
                     }
                 }
                 else {        //sub instruction
@@ -71,13 +84,13 @@ int simulate(unsigned short instr)
                     if((offset5 & 0x10) == 0){           //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                  //if so -> sub format: "SUB rd, rs, rn"
                     	Regs[rd] = Regs[rs] - Regs[rn];		  //update registers array 
-				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
+			cout << "\n \t r"<< rd << " has been updated";
 
                     }
                 	else {
                     	printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set: -> sub format: "SUB rd, rs, offset"  
                     	Regs[rd] = Regs[rs] - offset3;           //update registers array 
-				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
+			cout << "\n \t r"<< rd << " has been updated";
                     }
 				}    
             }
