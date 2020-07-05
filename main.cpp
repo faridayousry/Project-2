@@ -58,42 +58,74 @@ int simulate(unsigned short instr)
                 	if((offset5 & 0x10) == 0){          //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                //if so -> add format: "ADD rd, rs, rn"
                     	Regs[rd] = Regs[rs] + Regs[rn];         //update registers array 
+				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
                     }
                 	else {                              //else if 'I' flag (immediate') is not set:
                     	printf("#%d\n", offset3);           //-> add format: "ADD rd, rs, offset"
                     	Regs[rd] = Regs[rs] + offset3;          //update registers array 
+				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
                     }
                 }
                 else {        //sub instruction
                     printf("sub\tr%d, r%d, ", rd, rs);
                     if((offset5 & 0x10) == 0){           //check if the 'I' flag (immediate') is set:
                     	printf("r%d\n", rn);                  //if so -> sub format: "SUB rd, rs, rn"
-                    	Regs[rd] = Regs[rs] - Regs[rn];
+                    	Regs[rd] = Regs[rs] - Regs[rn];		  //update registers array 
+				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
+
                     }
                 	else {
-                    	printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set:
-                    	Regs[rd] = Regs[rs] - offset3;         //-> sub format: "SUB rd, rs, offset"  
+                    	printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set: -> sub format: "SUB rd, rs, offset"  
+                    	Regs[rd] = Regs[rs] - offset3;           //update registers array 
+				//OUTPUT "Ri has been updated" !!!!!!!!!!!!!!!11111
                     }
-				}
-                
-                    
-                
+				}    
             }
             break;
-           
+		  
+		    
+        case 1:		//formats 
+		break;    
+		    
+		    
+	case 2:		//formats 
+		break;   
+		    
+		    
+	case 3:		//formats 
+		break;  
+		    
+		    
+	case 4:		//formats 
+		break;      
+		    
+		    
+	case 5:		//formats 
+		break;      
+		    
+		    
+	case 6:		//formats 
+		break;  
+		   
+		    
         case 7:		//formats 18 & 19
             if(((instr>>11)&3) == 0) {		//if opcode == 0 ; -> format 18 (unconditional branch)
                 int off;			//declare offset11 (bits 0-10)  
                 if(instr & 0x400)		    //if sign bit == 1
                     off = (instr & 0x7FF) - 0x800;	//mask to get 11 right most bits (0-10) from instruction
 		    						//Offset11 - 1000 000 0000 = 2's complement ?????
+		    //WE NEED TO UPDATE PC!!!!!!!!!!!!!!!!
                 else
-                    off = (instr & 0x7FF);		//else if sign bit == 0
+                    off = (instr & 0x7FF);	//else if sign bit == 0
                 printf("B\t%d\t\t# Jump to (current instr. addr)+4%+d\n", off,off*2);	
+		   
+		   //WE NEED TO UPDATE PC!!!!!!!!!!!!!!! 
             }
 	    else{				//format 19 (long branch woth link)
-		int off;
+		int off;					//CONSIDER SIGN BIT OF  ADDRESS????????????
 		if(((instr>>11)&1) == 0){	//High 'H' flag == 0  (instruction 1)
+			off = instr & 0x07FF;		//mask to get offset  (0000 0111 1111 1111)
+			
 		}
             break;
         
