@@ -209,7 +209,7 @@ int simulate(unsigned short instr)
                                         printf("UNKNOWN INSTR\n");
                             }
                         
-                        else{				//format 5      //NOT FULLY SURE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        else{				//format 5      //NOT FULLY SURE!!!!!!!! 	[B O N U S]
                             op = (instr >> 8) & 3;	 //adjust op respective to be bits 8-9 for format 5
                             int hs = rs;
                             int hd = rd;
