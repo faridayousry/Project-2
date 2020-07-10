@@ -310,12 +310,6 @@ int simulate(unsigned short instr)
                                         printf("UNKNOWN INSTR\n");
                             }
 
-
-
-                    case 1:     //format 6
-
-
-
             }
 		        default:
             		printf("UNKNOWN INSTR\n");
