@@ -150,6 +150,7 @@ int simulate(unsigned short instr)
         switch (op)
         {
         case 0: 		//formats 4 & 5     (ALU operations & Hi register ops/branch exchange)
+                
             if (((instr >> 10) & 1) == 0) {	   //format 4  
                 op = (instr >> 6) & 15;	 //adjust op respective to be bits 6-9 for format 4 
 
@@ -214,6 +215,41 @@ int simulate(unsigned short instr)
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
+                case 10:		//cmp instruction (rd - rs)? 1:0)
+                    printf("cmp\tr%d, r%d\n", rd, rs);
+                    //(Regs[rd] - Regs[rd])? 1:0
+                    //cout << "\n \t R" << rd << " has been updated";
+                    break;
+
+                case 11:     //cmn instruction (rd + rs)? 1:0)
+                    printf("cmn\tr%d, r%d\n", rd, rs);
+                    //(Regs[rd] + Regs[rd])? 1:0
+                    //cout << "\n \t R" << rd << " has been updated";
+                    break;
+
+                    case 12:		//orr instruction(rd := rd or rs  [bitwise or])
+                    printf("orr\tr%d, r%d\n", rd, rs);
+                    Regs[rd] = Regs[rd] | Regs[rs];         //??????????????????????????????
+                    cout << "\n \t R" << rd << " has been updated";
+                    break;
+
+                case 13:     //mul instruction (rd = rd * rs)
+                    printf("mul\tr%d, r%d\n", rd, rs);
+                    Regs[rd] = Regs[rd] * Regs[rs];
+                    cout << "\n \t R" << rd << " has been updated";
+                    break;
+
+                case 14:		//bic instruction (rd = rd AND NOT rs)
+                    printf("bic\tr%d, r%d\n", rd, rs);
+                    Regs[rd] = Regs[rd] and (not Regs[rs]);     //set condition codes
+                        cout << "\n \t R"<< rd << " has been updated";
+                    break;
+
+                case 15:     //mvn instruction (rd = not rs)
+                    printf("mvn\tr%d, r%d\n", rd, rs);
+                    Regs[rd] = not Regs[rs];
+                    cout << "\n \t R" << rd << " has been updated";
+                    break;
                 }
                 break;
         default:
@@ -348,7 +384,7 @@ int simulate(unsigned short instr)
 
 
 
-    case 3:		//formats 
+    case 3:		//format 9
         break;
 
 
