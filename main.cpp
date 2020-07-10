@@ -3,7 +3,8 @@
 #include <iostream>
 using namespace std;
 	
-FARIDAAAA 
+FARIDAAAA
+Ahmed!!!
 
 int simulate(unsigned short);
 
