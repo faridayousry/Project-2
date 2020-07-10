@@ -2,6 +2,8 @@
 #include "stdlib.h"
 #include <iostream>
 using namespace std;
+	
+FARIDAAAA 
 
 int simulate(unsigned short);
 
