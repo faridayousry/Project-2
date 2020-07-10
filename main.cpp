@@ -161,9 +161,9 @@ int simulate(unsigned short instr)
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
-                case 1:     //eor instruction (rd = rd eor rs)
+                case 1:     //eor instruction (rd = rd (bitwise xor) rs)
                     printf("eor\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] eor Regs[rs];
+                    Regs[rd] = Regs[rd] ^ Regs[rs];
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
@@ -181,29 +181,33 @@ int simulate(unsigned short instr)
 
                 case 4:		//asr instruction (rd = rd asr rs)
                     printf("asr\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] asr Regs[rs];
+                    Regs[rd] = Regs[rd] / (2^Regs[rs]);         //?????????????????????????????????
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
-                case 5:     //adc instruction (rd = rd + rs + c-bit)
+                case 5:     //adc instruction (rd = rd + rs + carry flad)
                     printf("adc\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] adc Regs[rs];
+                    Regs[rd] = Regs[rd] + Regs[rs];     //HOW TO ADD CARRY FLAG??????????????????????
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
-                case 6:		//sbc instruction(rd = rd + rs + NOT c-bit)
+                case 6:		//sbc instruction(rd = rd - rs - NOT c-bit)
                     printf("sbc\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] sbc Regs[rs];
+                    Regs[rd] = Regs[rd] - Regs[rs];         //HOW TO SUB CARRY FLAG??????????????????????
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
                 case 7:     //ror instruction (rd = rd ror rs)
                     printf("ror\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] ror Regs[rs];
+                     for(int i=0; i<Regs[rs]; i++){         //rotate right
+                          if(Regs[rd] & 0x01)           //if right most bit == 1 (the bit that is about to be shifted)
+                              Regs[rd] = (Regs[rd] >> 1) | 0x80;    //shift rd to the right and add one to the left of rd
+                            else Regs[rd] = Regs[rd] >> 1;      //else if right most bit == 0; just shift to the right; the zero will be automatically added to the left
+                     }
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
-                case 8:		//tst instruction (rd = rd << rs)
+                case 8:		//tst instruction (flag = rd and rs)
                     printf("tst\tr%d, r%d\n", rd, rs);
                     //Regs[rd] = Regs[rd] tst Regs[rs];  - set condition codes
                         //cout << "\n \t R"<< rd << " has been updated";
@@ -241,13 +245,13 @@ int simulate(unsigned short instr)
 
                 case 14:		//bic instruction (rd = rd AND NOT rs)
                     printf("bic\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] and (not Regs[rs]);     //set condition codes
+                    Regs[rd] = Regs[rd] and (~Regs[rs]);     //set condition codes
                         cout << "\n \t R"<< rd << " has been updated";
                     break;
 
                 case 15:     //mvn instruction (rd = not rs)
                     printf("mvn\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = not Regs[rs];
+                    Regs[rd] = ~Regs[rs];                   //SHOULD IT BE 'NOT'/'NEG'/'¬'/'!'/'~' ??????????????????????
                     cout << "\n \t R" << rd << " has been updated";
                     break;
                 }
