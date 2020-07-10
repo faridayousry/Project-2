@@ -25,7 +25,7 @@ int main() {
         printf("Cannot open the file\n");
         exit(0);
     }
-
+//fread twize for first 2 instr???????????????????????????????????/
     while (fread(&inst_word, 2, 1, fp))
     {
         printf("%08x\t%04x\t", PC, inst_word);
@@ -56,12 +56,12 @@ int simulate(unsigned short instr)
 
             switch (op)
             {
-            case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);	//logical left shift instruction
+            case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);	//logical left shift instruction IMPLEMENTTTTTTTTTTTTTTTTTTTTTTTTT
                 Regs[rd] = (Regs[rs] << offset5);
                 cout << "\n \t R" << rd << " has been updated";
                 break;
 
-            case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5); 	//logical right shift instruction
+            case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5); 	//logical right shift instruction  IMPLEMENTTTTTTTTTTTTTTTTTTTTTTTTT
                 Regs[rd] = (Regs[rs] >> offset5);
                 cout << "\n \t R" << rd << " has been updated";
                 break;
@@ -185,9 +185,9 @@ int simulate(unsigned short instr)
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
-                case 5:     //adc instruction (rd = rd + rs + carry flad)
+                case 5:     //adc instruction (rd = rd + rs + carry flag)
                     printf("adc\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] + Regs[rs];     //HOW TO ADD CARRY FLAG??????????????????????
+                    Regs[rd] = Regs[rd] + Regs[rs];     //HOW TO ADD CARRY FLAG?????????????????????? (probably from prev addition)
                     cout << "\n \t R" << rd << " has been updated";
                     break;
 
@@ -245,7 +245,7 @@ int simulate(unsigned short instr)
 
                 case 14:		//bic instruction (rd = rd AND NOT rs)
                     printf("bic\tr%d, r%d\n", rd, rs);
-                    Regs[rd] = Regs[rd] and (~Regs[rs]);     //set condition codes
+                    Regs[rd] = Regs[rd] & (~Regs[rs]);     //set condition codes
                         cout << "\n \t R"<< rd << " has been updated";
                     break;
 
@@ -362,10 +362,8 @@ int simulate(unsigned short instr)
             int imm = word8 << 2;           //we shift word8 to the left to output the correct value of the immediate as the assembler has stored into word8 the immediate shifted to the right by 2
             printf("ldr\tr%d,  #%d\n", rd, imm);	//Load into Rd the word found at the address formed by adding PC + word8
             Regs[rd] = Mem[Regs[15] + word8];       //Rd = PC + word8
-            Regs[rd] += Mem[Regs[15] + word8 + 1];
-            Regs[rd] += Mem[Regs[15] + word8 + 2];
-            Regs[rd] += Mem[Regs[15] + word8 + 3];      //to get full word / 4 bytes
-
+            Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 1];  //to get full word (2 bytes)
+            
             cout << "\n \t R" << rd << " has been updated";
             break;
 
@@ -409,7 +407,7 @@ int simulate(unsigned short instr)
             int off;			//declare offset11 (bits 0-10)  
             if (instr & 0x400)		    //if sign bit == 1
                 off = (instr & 0x7FF) - 0x800;	//mask to get 11 right most bits (0-10) from instruction
-                                //Offset11 - 1000 000 0000 = 2's complement ?????
+                                //Offset11 - 1000 0000 0000 = 2's complement 
         //WE NEED TO UPDATE PC!!!!!!!!!!!!!!!!
             else
                 off = (instr & 0x7FF);	//else if sign bit == 0
@@ -418,7 +416,7 @@ int simulate(unsigned short instr)
             //WE NEED TO UPDATE PC!!!!!!!!!!!!!!! 
         }
         else {				//format 19 (long branch woth link)
-            int off;					//CONSIDER SIGN BIT OF  ADDRESS????????????
+            int off;					//CONSIDER SIGN BIT OF  ADDRESS??????????????????????/
             off = instr & 0x07FF;		//mask to get offset  (0000 0111 1111 1111)
 
             if (((instr >> 11) & 1) == 0)
