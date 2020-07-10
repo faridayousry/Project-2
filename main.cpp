@@ -327,21 +327,24 @@ int simulate(unsigned short instr)
             Regs[rd] += Mem[Regs[15] + word8 + 3];      //to get full word / 4 bytes
 
             cout << "\n \t R" << rd << " has been updated";
-
             break;
 
-
-
-
-
-        default:
-            //this default makes an error :default label already appeared in this switch
-            // fi default tanya gowa nafs el case bas ana 3eni msh gybaha,try tracing it .
-            printf("UNKNOWN INSTR\n");
         }
-
-
         break;
+    default:
+        //this default makes an error :default label already appeared in this switch
+        // fi default tanya gowa nafs el case bas ana 3eni msh gybaha,try tracing it .
+        printf("UNKNOWN INSTR\n");
+
+
+        if ((instr >> 12) & 1) == 1{        //formats 7 
+
+            //check bit 9; if == 0 -> format 7, else exit if statement
+
+        }
+    
+        break;          //to close case 2
+
 
 
 
@@ -404,5 +407,5 @@ int simulate(unsigned short instr)
         printf("UNKNOWN INSTR!\n");
         }
 
-    }
+}
 }
