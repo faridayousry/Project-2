@@ -110,7 +110,7 @@ int simulate(unsigned short instr)
                 break;
 
             case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5);     //logical right shift instruction  
-                Regs[rd] = (Regs[rs] >> offset5);
+                Regs[rd] = (Regs[rs] / (2^offset5);
                 cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 break;
 
@@ -149,7 +149,7 @@ int simulate(unsigned short instr)
 
                 }
                 else {
-                    printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set: -> sub format: "SUB rd, rs, offset"
+                    printf("#%d\n", offset3);          //else if 'I' flag (immediate') if not set: -> sub format: "SUB rd, rs, offset"
                     Regs[rd] = Regs[rs] - offset3;           //update registers array
                     cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 }
@@ -171,7 +171,7 @@ int simulate(unsigned short instr)
             break;
 
         case 1: printf("cmp\tr%d, #%d\n", rd, offset8);        //cmp imm instruction
-            //(Regs[r] =  offset8)? 1;0        //USE CPSR ??
+            if(Regs[rd] == offset8) 
             break;
 
         case 2: printf("add\tr%d, #%d\n", rd, offset8);        //add imm instruction
