@@ -436,6 +436,12 @@ int simulate(unsigned short instr)
                         cout << "\n \t memory has been updated";
                         break;
                     case 2:
+                             printf("ldrb\tr%d,[r%d]\n", rd, rs, ro);
+                        Regs[rd] = Mem[Regs[rs] + Regs[ro]];
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 1] << 8);
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 2] << 16);
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 3] << 24);
+                        cout<< "\n \t  rd  has been updated";
                         printf("ldr\tr%d,[r%d]\n", rd, rs, ro);
                         Regs[rd] = Mem[Regs[rs] + Regs[ro]];
                         cout << "\n \t  rd  has been updated";
@@ -443,12 +449,10 @@ int simulate(unsigned short instr)
 
                         break;
                     case 3:
-                        printf("ldrb\tr%d,[r%d]\n", rd, rs, ro);
+                        printf("ldr\tr%d,[r%d]\n", rd, rs, ro);
                         Regs[rd] = Mem[Regs[rs] + Regs[ro]];
-                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 1] << 8);
-                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 2] << 16);
-                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 3] << 24);
-                        cout<< "\n \t  rd  has been updated";
+                        cout << "\n \t  rd  has been updated";
+
                         break;
                     default:
                         printf("UNKNOWN INSTR\n");
