@@ -3,6 +3,14 @@
 #include <iostream>
 using namespace std;
 
+//CARRY FLAG, lsl & lsr, why simulate returns int?????
+
+/* BL works in two stages:
+H=0: LR := PC + signextend(offset << 12)
+H=1: PC := LR + (offset << 1)
+LR := oldPC + 3
+    */
+
 void regPrint(unsigned int, int);
 
 int simulate(unsigned short);
@@ -13,6 +21,8 @@ unsigned int Regs[16];          //each register is 4 bytes?
 #define	PC	Regs[15]
 #define	LR	Regs[14]
 #define SP  Regs[13]
+
+int Word = 4;
 
 //SHOULD WE DEFINE A PSR (CPSR) program status register to use a flag/store the result of cmp instruction
 
@@ -399,7 +409,15 @@ int simulate(unsigned short instr)
             int imm = word8 << 2;           //we shift word8 to the left to output the correct value of the immediate as the assembler has stored into word8 the immediate shifted to the right by 2
             printf("ldr\tr%d,  #%d\n", rd, imm);	//Load into Rd the word found at the address formed by adding PC + word8
             Regs[rd] = Mem[Regs[15] + word8];       //Rd = PC + word8
-            Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 1];  //to get full word (2 bytes)
+            Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 1];  
+            Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 2]; 
+            Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 3];  //to get full word (4 bytes)
+                
+                
+                mem[0] = 1111
+                mem[1] = 0101
+                   
+                    rd = 1111 0000 | 0101
             
             cout << "\n \t R" << rd << " has been updated";
             break;
