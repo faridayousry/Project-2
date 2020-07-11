@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-
+void regPrint(unsigned int, int);
 
 int simulate(unsigned short);
 
@@ -42,6 +42,36 @@ int main() {
     fclose(fp);
     return 0;
 }
+
+
+
+
+void regPrint(unsigned int RList, int &rCount){
+    unsigned int regs[8];
+    unsigned int regs[0] = RList & 1;
+    unsigned int regs[1] = (RList >> 1) & 1;
+    unsigned int regs[2] = (RList >> 2) & 1;
+    unsigned int regs[3] = (RList >> 3) & 1;
+    unsigned int regs[4] = (RList >> 4) & 1;
+    unsigned int regs[5] = (RList >> 5) & 1;
+    unsigned int regs[6] = (RList >> 6) & 1;
+    unsigned int regs[7] = (RList >> 7) & 1;
+    
+    int reglist[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    for(int i = 0; i < 8; i++){
+        if(regs[i] == 1){
+            rCount++;
+            cout << "R" << reglist[i];
+        }
+        if(i == 7 && regs[i] == 1)
+            break;
+        if(regs[i + 1] == 1)
+            cout << ",";
+    }
+}
+
+
+
 
 
 int simulate(unsigned short instr)
@@ -397,17 +427,141 @@ int simulate(unsigned short instr)
     case 3:		//format 9
         break;
 
+ 
 
-    case 4:		//formats 
-        break;
+    case 5:        //format 14
+                        unsigned int L = (instr >> 11) & 1;
+                        unsigned int R = (instr >> 8) & 1;
+                        unsigned int RList = instr & 0x007F;
+                        int rCount;
+                        
+                        int  bit10 = ((instr >> 10) & 1);
+                        int S = ((instr >> 7) & 1);
+                        
+                        offset8 = instr & 0x7;
+                        if (bit10 == 0){        //format 13
+                            if (S == 0)
+                            {
+                                SP += offset8; // adding immediate to SP
+                                cout << "add\tSP,#" << offset8 << "\t" << endl;
+                            }
+                            else if (S == 1)
+                            {
+                                SP -= offset8;  //subtracting imm. from sp
+                                cout << "add\tSP,#-" << offset8 << endl;
+                            }
+                            else
+                            {
+                                cout << "unkown instruction!" << endl;
+                            }
+                        }
+                        else{               //format 14
+                            if(L == 0){
+                                if(R == 0){
+                                    cout << "push\t{"
+                                    regPrint(RList, rCount);
+                                    cout << "}" << endl;
+                                    SP = SP + (rCount * regSize);
+                                }
+                                else{
+                                    cout << "push\t{"
+                                    regPrint(RList, rCount);
+                                    cout << ", LR}" << endl;
+                                    SP = SP + ((rCount + 1) * regSize);
+                                }
+                            }
+                            else{
+                                if(R == 0){
+                                    cout << "pop\t{"
+                                    regPrint(RList, rCount);
+                                    cout << "}" << endl;
+                                    SP = SP + (rCount * regSize);
+                                }
+                                else{
+                                    cout << "push\t{"
+                                    regPrint(RList, rCount);
+                                    cout << ", PC}" << endl;
+                                    SP = SP + ((rCount + 1) * regSize);
+                                }
+                            }
+                        }
+                        break;
+                        
+                        
+      case 6:     //formats 16 and 17
+                        unsigned int cond = (instr >> 8) & 0xF;
+                        unsigned int v8 = instr & 0x00FF;
+                        if(cond == 15){             // format 17
+                            cout << "swi\t" << v8 << endl;
+                            cout << Regs[0] << endl;
+                        }
+                        else {                      // format 16
+                            switch (cond){
+                                case 0:
+                                    cout << "beq\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 1:
+                                    cout << "bne\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 2:
+                                    cout << "bcs\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 3:
+                                    cout << "bcc\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 4:
+                                    cout << "bmi\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 5:
+                                    cout << "bpl\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 6:
+                                    cout << "bvs\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 7:
+                                    cout << "bvc\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 8:
+                                    cout << "bhi\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 9:
+                                    cout << "bls\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 10:
+                                    cout << "bge\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 11:
+                                    cout << "blt\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 12:
+                                    cout << "bgt\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 13:
+                                    cout << "ble\tlabel" << v8 << endl;
+                                    PC = PC + Word;
+                                    break;
+                                case 14:
+                                    cout << "unidentified instruction" << endl;
+                                    break;
+                            }
+                        }
+                        break;
 
 
-    case 5:		//formats 
-        break;
 
-
-    case 6:		//formats 
-        break;
 
 
     case 7:		//formats 18 & 19
