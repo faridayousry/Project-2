@@ -21,10 +21,10 @@ unsigned int Regs[16];          //each register is 4 bytes?
 #define    LR    Regs[14]
 #define SP  Regs[13]
 
+bool CSPR = 0;  //PSR (CPSR) program status register to use a flag/store the result of cmp instruction & other instr(such as branch)
+bool carryBit =0;
 int regSize = 4;
 int Word = 4;
-
-//SHOULD WE DEFINE A PSR (CPSR) program status register to use a flag/store the result of cmp instruction
 
 int main() {
     FILE* fp;
@@ -104,19 +104,19 @@ int simulate(unsigned short instr)
 
             switch (op)
             {
-            case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);    //logical left shift instruction IMPLEMENTTTTTTTTTTTTTTTTTTTTTTTTT
+            case 0: printf("lsl\tr%d, r%d, #%d\n", rd, rs, offset5);    //logical left shift instruction 
                 Regs[rd] = (Regs[rs] << offset5);
-                cout << "\n \t R" << rd << " has been updated";
+                cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 break;
 
-            case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5);     //logical right shift instruction  IMPLEMENTTTTTTTTTTTTTTTTTTTTTTTTT
+            case 1: printf("lsr\tr%d, r%d, #%d\n", rd, rs, offset5);     //logical right shift instruction  
                 Regs[rd] = (Regs[rs] >> offset5);
-                cout << "\n \t R" << rd << " has been updated";
+                cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 break;
 
             case 2: printf("asr\tr%d, r%d, #%d\n", rd, rs, offset5);      //arithmetic right shift instruction
-                Regs[rd] = (Regs[rs] >> offset5);            //NEEDS TO CHANGE TO CHECK SIGN BIT!!!!!!!!!!!!!!!!!!!!!1
-                cout << "\n \t R" << rd << " has been updated";
+                Regs[rd] = (Regs[rs] >> offset5);            
+                cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 break;
             default:
                 printf("UNKNOWN INSTR\n");
@@ -132,12 +132,12 @@ int simulate(unsigned short instr)
                 if ((offset5 & 0x10) == 0) {          //check if the 'I' flag (immediate') is set:
                     printf("r%d\n", rn);                //if so -> add format: "ADD rd, rs, rn"
                     Regs[rd] = Regs[rs] + Regs[rn];         //update registers array
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 }
                 else {                              //else if 'I' flag (immediate') is not set:
                     printf("#%d\n", offset3);           //-> add format: "ADD rd, rs, offset"
                     Regs[rd] = Regs[rs] + offset3;          //update registers array
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has beenmodified to: "<<Regs[rd];
                 }
             }
             else {        //sub instruction
@@ -145,13 +145,13 @@ int simulate(unsigned short instr)
                 if ((offset5 & 0x10) == 0) {           //check if the 'I' flag (immediate') is set:
                     printf("r%d\n", rn);                  //if so -> sub format: "SUB rd, rs, rn"
                     Regs[rd] = Regs[rs] - Regs[rn];          //update registers array
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
 
                 }
                 else {
                     printf("#%d\n", offset3);          //else if 'I' flag (immediate') is not set: -> sub format: "SUB rd, rs, offset"
                     Regs[rd] = Regs[rs] - offset3;           //update registers array
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                 }
             }
         }
@@ -167,7 +167,7 @@ int simulate(unsigned short instr)
         {
         case 0: printf("mov\tr%d, #%d\n", rd, offset8);        //MOV imm instruction
             Regs[rd] = offset8;
-            cout << "\n \t R" << rd << " has been updated";
+            cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
             break;
 
         case 1: printf("cmp\tr%d, #%d\n", rd, offset8);        //cmp imm instruction
@@ -176,12 +176,12 @@ int simulate(unsigned short instr)
 
         case 2: printf("add\tr%d, #%d\n", rd, offset8);        //add imm instruction
             Regs[rd] = Regs[rd] + offset8;
-            cout << "\n \t R" << rd << " has been updated";
+            cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
             break;
 
         case 3: printf("sub\tr%d, #%d\n", rd, offset8);        //sub imm instruction
             Regs[rd] = Regs[rd] - offset8;
-            cout << "\n \t R" << rd << " has been updated";
+            cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
             break;
         //break
         default:
@@ -207,43 +207,43 @@ int simulate(unsigned short instr)
                 case 0:        //and instruction (rd = rd & rs)
                     printf("and\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] & Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 1:     //eor instruction (rd = rd (bitwise xor) rs)
                     printf("eor\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] ^ Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 2:        //lsl instruction (rd = rd << rs)
                     printf("lsl\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] << Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 3:     //lsr instruction (rd = rd >> rs)
                     printf("lsr\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] >> Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 4:        //asr instruction (rd = rd asr rs)
                     printf("asr\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] / (2 ^ Regs[rs]);         //?????????????????????????????????
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 5:     //adc instruction (rd = rd + rs + carry flag)
                     printf("adc\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] + Regs[rs];     //HOW TO ADD CARRY FLAG?????????????????????? (probably from prev addition)
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 6:        //sbc instruction(rd = rd - rs - NOT c-bit)
                     printf("sbc\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] - Regs[rs];         //HOW TO SUB CARRY FLAG??????????????????????
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 7:     //ror instruction (rd = rd ror rs)
@@ -253,55 +253,55 @@ int simulate(unsigned short instr)
                             Regs[rd] = (Regs[rd] >> 1) | 0x80;    //shift rd to the right and add one to the left of rd
                         else Regs[rd] = Regs[rd] >> 1;      //else if right most bit == 0; just shift to the right; the zero will be automatically added to the left
                     }
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 8:        //tst instruction (flag = rd and rs)
                     printf("tst\tr%d, r%d\n", rd, rs);
                     //Regs[rd] = Regs[rd] tst Regs[rs];  - set condition codes
-                    //cout << "\n \t R"<< rd << " has been updated";
+                    //cout << "\n \t R"<< rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 9:     //neg instruction (rd = rd >> rs)
                     printf("neg\tr%d, r%d\n", rd, rs);
                     Regs[rd] = -Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 10:        //cmp instruction (rd - rs)? 1:0)
                     printf("cmp\tr%d, r%d\n", rd, rs);
                     //(Regs[rd] - Regs[rd])? 1:0
-                    //cout << "\n \t R" << rd << " has been updated";
+                    //cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 11:     //cmn instruction (rd + rs)? 1:0)
                     printf("cmn\tr%d, r%d\n", rd, rs);
                     //(Regs[rd] + Regs[rd])? 1:0
-                    //cout << "\n \t R" << rd << " has been updated";
+                    //cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 12:        //orr instruction(rd := rd or rs  [bitwise or])
                     printf("orr\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] | Regs[rs];         //??????????????????????????????
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 13:     //mul instruction (rd = rd * rs)
                     printf("mul\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] * Regs[rs];
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 14:        //bic instruction (rd = rd AND NOT rs)
                     printf("bic\tr%d, r%d\n", rd, rs);
                     Regs[rd] = Regs[rd] & (~Regs[rs]);     //set condition codes
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 case 15:     //mvn instruction (rd = not rs)
                     printf("mvn\tr%d, r%d\n", rd, rs);
                     Regs[rd] = ~Regs[rs];                   //SHOULD IT BE 'NOT'/'NEG'/'¬'/'!'/'~' ??????????????????????
-                    cout << "\n \t R" << rd << " has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     break;
 
                 //break;
@@ -323,21 +323,21 @@ int simulate(unsigned short instr)
                     {
                         printf("add\tr%d, r%d\n", rd, hs);
                         Regs[rd] = Regs[rd] + Regs[hs];
-                        cout << "\n \t R" << rd << " has been updated";
+                        cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     }
 
                     else if (H == 2)     //ADD Hd, Rs
                     {
                         printf("add\tr%d, r%d\n", hd, rs);
                         Regs[hd] = Regs[hd] + Regs[rs];
-                        cout << "\n \t R" << hd << " has been updated";
+                        cout << "\n \t R" << hd << " has been modified to: "<<Regs[hd];
                     }
 
                     else    //H = 3 ; ADD Hd, Hs
                     {
                         printf("add\tr%d, r%d\n", hd, hs);
                         Regs[hd] = Regs[hd] + Regs[hs];
-                        cout << "\n \t R" << hd << " has been updated";
+                        cout << "\n \t R" << hd << " has been modified to: "<<Regs[hd];
                     }
                     break;
                 case 1:    //cmp instructions hi & lo
@@ -367,19 +367,19 @@ int simulate(unsigned short instr)
                     {        //mov rd, hs
                         printf("mov\tr%d, r%d\n", rd, hs);
                         Regs[rd] = Regs[hs];
-                        cout << "\n \t R" << rd << " has been updated";
+                        cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
                     }
                     else if (H == 2)
                     {        //mov hd, rs
                         printf("mov\tr%d, r%d\n", hd, rs);
                         Regs[hd] = Regs[rs];
-                        cout << "\n \t R" << hd << " has been updated";
+                        cout << "\n \t R" << hd << " has been modified to: "<<Regs[hd];
                     }
                     else
                     {        // H == 2 ; mov hd, hs
                         printf("mov\tr%d, r%d\n", hd, hs);
                         Regs[hd] = Regs[hs];
-                        cout << "\n \t R" << hd << " has been updated";
+                        cout << "\n \t R" << hd << " has been modified to: "<<Regs[hd];
                     }
                     break;
                 case 3:    //bx instructions hi & lo
@@ -417,7 +417,7 @@ int simulate(unsigned short instr)
             Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 2];
             Regs[rd] = (Regs[rd] << 8) | Mem[Regs[15] + word8 + 3];  //to get full word (4 bytes)
 
-            cout << "\n \t R" << rd << " has been updated";
+            cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
             break;
 
         // break;
@@ -469,7 +469,7 @@ int simulate(unsigned short instr)
                 case 3:
                     cout << "ldrb\tR" << rd << ", [R" << rs << ", R" << ro << "]\n";
                     Regs[rd] = Mem[Regs[rs] + Regs[ro]];
-                    cout << "\n \t  rd  has been updated";
+                    cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
 
                     break;
                 default:
@@ -497,34 +497,31 @@ case 3:    // format 9
         Mem[Regs[rs] + offset5 + 1] = Regs[rd] >> 8;
         Mem[Regs[rs] + offset5 + 2] = Regs[rd] >> 16;
         Mem[Regs[rs] + offset5 + 3] = Regs[rd] >> 24;
-        cout << "STR\trd,[rb,#" << offset5 << "]\n" << endl;
+        cout << "str\trd, [rb, #" << offset5 << "]\n" << endl;
 
         break;
 
     case 1:
-        cout << "STRB\trd,[rb,#" << offset5 << "]" << endl;
+        cout << "strb\trd,[rb, #" << offset5 << "]" << endl;
         Mem[Regs[rs] + offset5] = Regs[rd];
         cout << "\n \t memory has been updated";
 
         break;
 
     case 2:
-        cout << "LDRB\trd,[rb,#" << offset5 << "]" << endl;
+        cout << "ldr\trd,[rb,#" << offset5 << "]" << endl;
         Regs[rd] = 0;
         Regs[rd] = Mem[Regs[rs] + offset5];
         Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 1] << 8);
         Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 2] << 16);
         Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 3] << 24);
-        cout << " rd  has been updated";
-        cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
-        Regs[rd] = Mem[Regs[rs] + offset5];
-        cout << "\n \t  rd  has been updated";
-        break;
+        cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
+      
 
     case 3:
-        cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
+        cout << "ldrb\trd,[rb,#" << offset5 << "]" << endl;
         Regs[rd] = Mem[Regs[rs] + offset5];
-        cout << "\n \t  rd  has been updated";
+        cout << "\n \t R" << rd << " has been modified to: "<<Regs[rd];
         break;
 
        // break;
