@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-//CARRY FLAG, lsl & lsr, why simulate returns int?????
+//CARRY FLAG, lsl & lsr, why simulate returns int?????, output modified value, cspr flag, fseek for BRANCH, instr 14: rlist range
 
 /* BL works in two stages:
 H=0: LR := PC + signextend(offset << 12)
@@ -22,6 +22,7 @@ unsigned int Regs[16];          //each register is 4 bytes?
 #define	LR	Regs[14]
 #define SP  Regs[13]
 
+int regSize = 4;  
 int Word = 4;
 
 //SHOULD WE DEFINE A PSR (CPSR) program status register to use a flag/store the result of cmp instruction
@@ -56,26 +57,27 @@ int main() {
 
 
 
-void regPrint(unsigned int RList, int &rCount){
-    unsigned int regs[8];
-    unsigned int regs[0] = RList & 1;
-    unsigned int regs[1] = (RList >> 1) & 1;
-    unsigned int regs[2] = (RList >> 2) & 1;
-    unsigned int regs[3] = (RList >> 3) & 1;
-    unsigned int regs[4] = (RList >> 4) & 1;
-    unsigned int regs[5] = (RList >> 5) & 1;
-    unsigned int regs[6] = (RList >> 6) & 1;
-    unsigned int regs[7] = (RList >> 7) & 1;
+void regPrint(unsigned int RList, int &rCount)
+{
+    unsigned int R[8];
+    unsigned int R[0] = RList & 1;
+    unsigned int R[1] = (RList >> 1) & 1;
+    unsigned int R[2] = (RList >> 2) & 1;
+    unsigned int R[3] = (RList >> 3) & 1;
+    unsigned int R[4] = (RList >> 4) & 1;
+    unsigned int R[5] = (RList >> 5) & 1;
+    unsigned int R[6] = (RList >> 6) & 1;
+    unsigned int R[7] = (RList >> 7) & 1;
     
-    int reglist[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+   
     for(int i = 0; i < 8; i++){
-        if(regs[i] == 1){
+        if(R[i] == 1){
             rCount++;
-            cout << "R" << reglist[i];
+            cout << "R" << i;
         }
-        if(i == 7 && regs[i] == 1)
+        if(i == 7 && R[i] == 1)
             break;
-        if(regs[i + 1] == 1)
+        if(R[i + 1] == 1)
             cout << ",";
     }
 }
@@ -533,7 +535,7 @@ int simulate(unsigned short instr)
 
  
 
-    case 5:        //format 14
+    case 5:        //formats 13 & 14
                         unsigned int L = (instr >> 11) & 1;
                         unsigned int R = (instr >> 8) & 1;
                         unsigned int RList = instr & 0x007F;
@@ -560,32 +562,32 @@ int simulate(unsigned short instr)
                             }
                         }
                         else{               //format 14
-                            if(L == 0){
+                            if(L == 0){         //pushing onto stack 
                                 if(R == 0){
                                     cout << "push\t{"
                                     regPrint(RList, rCount);
                                     cout << "}" << endl;
                                     SP = SP + (rCount * regSize);
-                                }
-                                else{
+                                }     
+                                else{   //R == 1
                                     cout << "push\t{"
                                     regPrint(RList, rCount);
                                     cout << ", LR}" << endl;
                                     SP = SP + ((rCount + 1) * regSize);
                                 }
                             }
-                            else{
+                            else{      //L = 1 (pop)
                                 if(R == 0){
                                     cout << "pop\t{"
                                     regPrint(RList, rCount);
                                     cout << "}" << endl;
-                                    SP = SP + (rCount * regSize);
+                                    SP = SP - (rCount * regSize);
                                 }
                                 else{
                                     cout << "push\t{"
                                     regPrint(RList, rCount);
                                     cout << ", PC}" << endl;
-                                    SP = SP + ((rCount + 1) * regSize);
+                                    SP = SP - ((rCount + 1) * regSize);
                                 }
                             }
                         }
