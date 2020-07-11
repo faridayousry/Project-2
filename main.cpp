@@ -7,11 +7,12 @@ using namespace std;
 
 int simulate(unsigned short);
 
-unsigned char Mem[1024];
-unsigned int Regs[16];
+unsigned char Mem[1024];        //memory is 1024 bytes?
+unsigned int Regs[16];          //each register is 4 bytes?
 
 #define	PC	Regs[15]
 #define	LR	Regs[14]
+#define SP  Regs[13]
 
 //SHOULD WE DEFINE A PSR (CPSR) program status register to use a flag/store the result of cmp instruction
 
@@ -25,9 +26,15 @@ int main() {
         printf("Cannot open the file\n");
         exit(0);
     }
-//fread twize for first 2 instr???????????????????????????????????/
+    
+    fread(&SP, 4, 1, fp);        //reading first 32-bits to set as the initial value for the stack pointer
+    fread(&PC, 4, 1, fp);        //reading second 32-bits to set as the initial value for the program counter
+
     while (fread(&inst_word, 2, 1, fp))
     {
+        if(inst_word == 0xDEAD)     //if terminator instruction is found -> terminate simulator
+            return 0;
+        
         printf("%08x\t%04x\t", PC, inst_word);
         simulate(inst_word);
         PC += 2;
@@ -375,7 +382,8 @@ int simulate(unsigned short instr)
         printf("UNKNOWN INSTR\n");
 
 
-        if ((instr >> 12) & 1) == 1{        //formats 7 
+            
+        if ((instr >> 12) & 1) == 1{        //format 7 
 
             //check bit 9; if == 0 -> format 7, else exit if statement
 
