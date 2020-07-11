@@ -412,11 +412,53 @@ int simulate(unsigned short instr)
         printf("UNKNOWN INSTR\n");
 
 
-            
-        if ((instr >> 12) & 1) == 1{        //format 7 
+     if (((instr >> 12) & 1) == 1)  // validate format 7 from the 12bit,
+            {
+                if (((instr >> 9) & 1) == 1)
+                {
+                    int LB = ((instr >> 10) & 3);
+                    int ro = ((instr >> 6) & 7);
+                    switch (LB)
+                    {
+                    case 0:
+                        printf("str\tr%d,[r%d]\n", rd, rs, ro);
+                        Mem[Regs[rs] + Regs[ro]] = Regs[rd];
+                        Mem[Regs[rs] + Regs[ro] + 1] = Regs[rd] >> 8;
+                        Mem[Regs[rs] + Regs[ro] + 2] = Regs[rd] >> 16;
+                        Mem[Regs[rs] + Regs[ro] + 3] = Regs[rd] >> 24;
 
-            //check bit 9; if == 0 -> format 7, else exit if statement
+                        cout << "\n \t memory has been updated";
+                        break; 
 
+                    case 1:
+                        printf("str\tr%d,[r%d]\n", rd, rs, ro);
+                        Mem[Regs[rs] + Regs[ro]] = Regs[rd];
+                        cout << "\n \t memory has been updated";
+                        break;
+                    case 2:
+                        printf("ldr\tr%d,[r%d]\n", rd, rs, ro);
+                        Regs[rd] = Mem[Regs[rs] + Regs[ro]];
+                        cout << "\n \t  rd  has been updated";
+
+
+                        break;
+                    case 3:
+                        printf("ldrb\tr%d,[r%d]\n", rd, rs, ro);
+                        Regs[rd] = Mem[Regs[rs] + Regs[ro]];
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 1] << 8);
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 2] << 16);
+                        Regs[rd] = Regs[rd] | (Mem[Regs[rs] + Regs[ro] + 3] << 24);
+                        cout<< "\n \t  rd  has been updated";
+                        break;
+                    default:
+                        printf("UNKNOWN INSTR\n");
+
+
+
+                    }
+                }
+                break;
+            }
         }
     
         break;          //to close case 2
@@ -424,7 +466,44 @@ int simulate(unsigned short instr)
 
 
 
-    case 3:		//format 9
+    case 3:	
+                int BL = (instr >> 11) & 3;
+            switch (BL)
+            {
+            case 0:
+                Mem[Regs[rs] + offset5] = Regs[rd];
+                Mem[Regs[rs] + offset5 + 1] = Regs[rd] >> 8;
+                Mem[Regs[rs] + offset5 + 2] = Regs[rd] >> 16;
+                Mem[Regs[rs] + offset5 + 3] = Regs[rd] >> 24;
+                cout << "STR\trd,[rb,#" << offset5 <<"]\n" << endl;
+
+                break;
+            case 1:
+                cout << "STRB\trd,[rb,#" << offset5 << "]" << endl;
+                Mem[Regs[rs] + offset5] = Regs[rd];
+                cout << "\n \t memory has been updated";
+
+                break;
+            case 2:
+                cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
+                Regs[rd] = Mem[Regs[rs] + offset5];
+                cout << "\n \t  rd  has been updated";
+
+            case 3:
+                cout << "LDRB\trd,[rb,#" << offset5 << "]" << endl;
+                Regs[rd] = 0;
+                Regs[rd] = Mem[Regs[rs] + offset5];
+                Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 1] << 8);
+                Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 2] << 16);
+                Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 3] << 24);
+                cout << " rd  has been updated";
+
+                break;
+            default:
+                printf("UNKNOWN INSTR\n");
+
+
+            }
         break;
 
  
