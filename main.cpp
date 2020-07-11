@@ -470,7 +470,7 @@ int simulate(unsigned short instr)
 
 
 
-    case 3:	
+    case 3:	// format 9
                 int BL = (instr >> 11) & 3;
             switch (BL)
             {
@@ -489,18 +489,21 @@ int simulate(unsigned short instr)
 
                 break;
             case 2:
-                cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
-                Regs[rd] = Mem[Regs[rs] + offset5];
-                cout << "\n \t  rd  has been updated";
-
-            case 3:
-                cout << "LDRB\trd,[rb,#" << offset5 << "]" << endl;
+                     cout << "LDRB\trd,[rb,#" << offset5 << "]" << endl;
                 Regs[rd] = 0;
                 Regs[rd] = Mem[Regs[rs] + offset5];
                 Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 1] << 8);
                 Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 2] << 16);
                 Regs[rd] = Regs[rd] | (Mem[Regs[rs] + offset5 + 3] << 24);
                 cout << " rd  has been updated";
+                cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
+                Regs[rd] = Mem[Regs[rs] + offset5];
+                cout << "\n \t  rd  has been updated";
+
+            case 3:
+               cout << "LDR\trd,[rb,#" << offset5 << "]" << endl;
+                Regs[rd] = Mem[Regs[rs] + offset5];
+                cout << "\n \t  rd  has been updated";
 
                 break;
             default:
