@@ -420,7 +420,7 @@ int simulate(unsigned short instr)
             cout << "\n \t R" << rd << " has been updated";
             break;
 
-         break;
+        // break;
         default:
             //this default makes an error :default label already appeared in this switch
             // fi default tanya gowa nafs el case bas ana 3eni msh gybaha,try tracing it .
